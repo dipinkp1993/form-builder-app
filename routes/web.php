@@ -5,9 +5,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
-
-});
 Route::get('/', [PublicController::class, 'index'])->name('welcome');
 Route::get('/form/{form}/view', [PublicController::class, 'viewForm'])->name('view_form');
 Route::post('/form/{form}/submit', [PublicController::class, 'submitForm'])->name('submit_form');
@@ -25,6 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/forms/store', [FormController::class, 'storeForm'])->name('forms.store');
     Route::get('forms/{form}/edit', [FormController::class, 'editForm'])->name('forms.edit');
     Route::put('/forms/update/{id}', [FormController::class, 'updateForm'])->name('forms.update');
+    Route::delete('/forms/{form}/destroy', [FormController::class, 'destroyForm'])->name('forms.destroy');
     Route::get('/submissions/{form}/list', [FormController::class, 'listSubmissions'])->name('forms.submissions.list');
 
 });

@@ -23,6 +23,11 @@
                                                 {{ session('success') }}
                                             </div>
                                         @endif
+                                        @if (session('error'))
+                                            <div class="bg-red-200 text-red-800 rounded-lg p-3 mb-3">
+                                                {{ session('error') }}
+                                            </div>
+                                        @endif
                                         @if ($errors->any())
                                             <div class="alert alert-danger">
                                                 <ul>
@@ -39,7 +44,7 @@
 
                                             <div class="mb-4">
                                                 <label for="name" class="block text-gray-700 font-bold mb-2">Form Name</label>
-                                                <input type="text" name="name" id="name" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" value="{{ $form->name }}" required>
+                                                <input type="text" name="name" id="name" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm form-name" value="{{ $form->name }}" required>
                                             </div>
 
                                             <div class="mb-4">
@@ -62,7 +67,7 @@
                                                         <!-- Add other field types as needed -->
                                                     </select>
                                                     <div class="options-container" style="{{ $field->type === 'select' ? 'display:block' : 'display:none' }}">
-                                                        <input type="text" name="fields[{{ $index }}][options][]" placeholder="Option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" value="{{ implode(',', json_decode($field->options)) }}">
+                                                        <input type="text" name="fields[{{ $index }}][options][]" placeholder="Option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm option-field" value="{{ implode(',', json_decode($field->options)) }}"><br>(<small>*Note:Add comma seperated options</small>)
                                                     </div>
 
                                                     <button type="button" class="remove-field ml-2 px-2 py-1 bg-red-500 text-red rounded">Remove</button>
@@ -106,12 +111,17 @@
                 if (input.getAttribute('name').includes('name')) {
                     input.addEventListener('input', function(event) {
                         var inputValue = event.target.value;
-                       if (!/^[A-Za-z_\s]+$/.test(inputValue)) {
-                            event.target.value = inputValue.slice(0, -1);
-                        }
+                        // Only allow alphanumeric characters and whitespace
+                        event.target.value = inputValue.replace(/[^A-Za-z0-9\s]/g, '');
+                    });
+                } else if (input.classList.contains('option-field')) {
+                    // Add input validation for option field
+                    input.addEventListener('input', function(event) {
+                        var inputValue = event.target.value;
+                        // Only allow alphanumeric characters and whitespace
+                        event.target.value = inputValue.replace(/[^A-Za-z0-9\s,]/g, '');
                     });
                 }
-                
             });
             newField.style.display = 'block';
             newField.querySelector('.remove-field').addEventListener('click', function() {
@@ -160,8 +170,19 @@
                 }
             }
         });
+
+        // Add input validation for existing option-field class fields when the document loads
+        var optionFields = document.querySelectorAll('.option-field');
+        optionFields.forEach(function(optionField) {
+            optionField.addEventListener('input', function(event) {
+                var inputValue = event.target.value;
+                // Only allow alphanumeric characters and whitespace
+                event.target.value = inputValue.replace(/[^A-Za-z0-9\s,]/g, '');
+            });
+        });
     });
 </script>
+
 
 
 

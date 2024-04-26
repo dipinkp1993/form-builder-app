@@ -22,7 +22,7 @@ class StoreFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|unique:forms|max:255',
             'description' => 'nullable|string',
             'fields.*.label' => 'required|string|max:255',
             'fields.*.name' => 'required|string|max:255',

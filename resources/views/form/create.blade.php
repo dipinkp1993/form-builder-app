@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Form') }}
+            {{ __('Dashboard') }}
         </h2>
     </x-slot>
 
@@ -21,6 +21,20 @@
                                         @if (session('success'))
                                             <div class="bg-green-200 text-green-800 rounded-lg p-3 mb-3">
                                                 {{ session('success') }}
+                                            </div>
+                                        @endif
+                                        @if (session('error'))
+                                            <div class="bg-red-200 text-red-800 rounded-lg p-3 mb-3">
+                                                {{ session('error') }}
+                                            </div>
+                                        @endif
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
                                         @endif
 
@@ -51,7 +65,8 @@
                                                         <!-- Add other field types as needed -->
                                                     </select>
                                                     <div class="options-container" style="display: none;">
-                                                        <input type="text" name="fields[0][options][]" placeholder="Option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                                        <input type="text" name="fields[0][options][]" placeholder="Option" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm option-field">
+                                                        <br>(<small>*Note:Add comma seperated options</small>)
                                                     </div>
                                                     <a type="button" class="remove-field ml-2 px-2 py-1 bg-red-500 text-red rounded">Remove</a>
                                                 </div>
@@ -98,7 +113,15 @@
                             event.target.value = inputValue.slice(0, -1);
                         }
                     });
-                }
+                
+                } else if (input.classList.contains('option-field')) {
+                        // Add input validation for option field
+                        input.addEventListener('input', function(event) {
+                            var inputValue = event.target.value;
+                            event.target.value = inputValue.replace(/[^a-zA-Z0-9\s,]/g, '');
+                        });
+                    }
+            
             });
             
             // Show the new field
